@@ -1,7 +1,8 @@
 .projects {
   min-height: calc(100vh - 120px);
   padding: 80px 0 40px;
-  background-color: #f8f9fa;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  position: relative;
 }
 
 .container {
@@ -12,9 +13,14 @@
 
 .title {
   font-size: 2.5rem;
-  color: #333;
+  color: var(--gray-800);
   text-align: center;
   margin-bottom: 1rem;
+  font-weight: 700;
+  background: linear-gradient(45deg, var(--primary-color), var(--accent-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .subtitle {
@@ -33,9 +39,11 @@
   align-items: center;
   margin-bottom: 2rem;
   padding: 1rem;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .filterButtons {
@@ -45,24 +53,26 @@
 
 .filterButton {
   padding: 0.5rem 1rem;
-  border: 2px solid #e9ecef;
+  border: 2px solid var(--gray-200);
   background: white;
-  color: #666;
-  border-radius: 6px;
+  color: var(--gray-600);
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
   font-weight: 500;
 }
 
 .filterButton:hover {
-  border-color: #007bff;
-  color: #007bff;
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  transform: translateY(-1px);
 }
 
 .filterButton.active {
-  background: #007bff;
-  border-color: #007bff;
+  background: linear-gradient(45deg, var(--primary-color), var(--accent-blue));
+  border-color: var(--primary-color);
   color: white;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
 .projectCount {

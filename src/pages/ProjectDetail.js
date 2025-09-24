@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { projects } from '../data/projects';
 import styles from './ProjectDetail.module.css';
@@ -7,6 +7,12 @@ const ProjectDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const project = projects[parseInt(id)];
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
+  
+  // 프로젝트의 이미지 배열을 가져오기 (images가 있으면 사용, 없으면 image를 배열로)
+  const projectImages = project?.images || (project?.image ? [project.image] : []);
 
   if (!project) {
     return (
@@ -37,8 +43,45 @@ const ProjectDetail = () => {
     }
   };
 
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % projectImages.length);
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + projectImages.length) % projectImages.length);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'ArrowLeft') prevImage();
+    if (e.key === 'ArrowRight') nextImage();
+  };
+
+  const handleTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe && projectImages.length > 1) {
+      nextImage();
+    }
+    if (isRightSwipe && projectImages.length > 1) {
+      prevImage();
+    }
+  };
+
   return (
-    <div className={styles.projectDetail}>
+    <div className={styles.projectDetail} onKeyDown={handleKeyDown} tabIndex={0}>
       <div className={styles.container}>
         <button onClick={() => navigate('/')} className={styles.backButton}>
           ← 프로젝트 목록으로 돌아가기
@@ -73,13 +116,54 @@ const ProjectDetail = () => {
         <div className={styles.content}>
           <div className={styles.mainContent}>
             <div className={styles.imageSection}>
-              {project.image ? (
-                <div className={styles.imageContainer}>
-                  <img 
-                    src={project.image} 
-                    alt={project.title}
-                    className={styles.projectImage}
-                  />
+              {projectImages.length > 0 ? (
+                <div className={styles.imageSlider}>
+                  <div 
+                    className={styles.imageContainer}
+                    onTouchStart={handleTouchStart}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={handleTouchEnd}
+                  >
+                    <img 
+                      src={projectImages[currentImageIndex]} 
+                      alt={`${project.title} - 이미지 ${currentImageIndex + 1}`}
+                      className={styles.projectImage}
+                    />
+                    
+                    {projectImages.length > 1 && (
+                      <>
+                        <button 
+                          className={styles.navButton} 
+                          onClick={prevImage}
+                          aria-label="이전 이미지"
+                        >
+                          ‹
+                        </button>
+                        <button 
+                          className={`${styles.navButton} ${styles.nextButton}`} 
+                          onClick={nextImage}
+                          aria-label="다음 이미지"
+                        >
+                          ›
+                        </button>
+                        
+                        <div className={styles.imageCounter}>
+                          {currentImageIndex + 1} / {projectImages.length}
+                        </div>
+                        
+                        <div className={styles.imageDots}>
+                          {projectImages.map((_, index) => (
+                            <button
+                              key={index}
+                              className={`${styles.dot} ${index === currentImageIndex ? styles.activeDot : ''}`}
+                              onClick={() => setCurrentImageIndex(index)}
+                              aria-label={`이미지 ${index + 1}로 이동`}
+                            />
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </div>
               ) : (
                 <div 

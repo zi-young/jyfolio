@@ -4,6 +4,7 @@ import styles from './Navbar.module.css';
 
 const Navbar = () => {
   const [activeSection, setActiveSection] = useState('home');
+  const [imageError, setImageError] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -52,7 +53,19 @@ const Navbar = () => {
           onClick={() => scrollToSection('home')} 
           className={styles.logo}
         >
-          JY Portfolio
+          {/* {!imageError ? (
+            <img 
+              src="/img/jiyoung.jpg" 
+              alt="JY Portfolio" 
+              className={styles.profileImage}
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <div className={styles.profilePlaceholder}>
+              <span className={styles.placeholderText}>JY</span>
+            </div>
+          )} */}
+          <span className={styles.logoText}>JY</span>
         </button>
         <ul className={styles.navList}>
           <li>

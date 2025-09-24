@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import emailjs from '@emailjs/browser';
 import styles from './Contact.module.css';
 
 const Contact = () => {
+  const form = useRef();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     message: ''
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -15,12 +18,44 @@ const Contact = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // 폼 제출 로직 (추후 구현)
-    console.log('Form submitted:', formData);
-    alert('메시지가 전송되었습니다!');
-    setFormData({ name: '', email: '', message: '' });
+    setIsLoading(true);
+    
+    try {
+      // EmailJS 설정이 완료되지 않은 경우 mailto 방식으로 대체
+      if (!process.env.REACT_APP_EMAILJS_SERVICE_ID || 
+          process.env.REACT_APP_EMAILJS_SERVICE_ID === 'service_1234567') {
+        
+        // mailto 방식으로 메일 클라이언트 열기
+        const subject = `포트폴리오 문의 - ${formData.name}`;
+        const body = `이름: ${formData.name}\n이메일: ${formData.email}\n\n메시지:\n${formData.message}`;
+        const mailtoLink = `mailto:jypark912@naver.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        
+        window.location.href = mailtoLink;
+        alert('메일 클라이언트가 열렸습니다. 메일을 확인하고 전송해주세요!');
+        setFormData({ name: '', email: '', message: '' });
+        
+      } else {
+        // EmailJS를 사용하여 메일 전송
+        const result = await emailjs.sendForm(
+          process.env.REACT_APP_EMAILJS_SERVICE_ID,
+          process.env.REACT_APP_EMAILJS_TEMPLATE_ID,
+          form.current,
+          process.env.REACT_APP_EMAILJS_PUBLIC_KEY
+        );
+        
+        console.log('SUCCESS!', result.status, result.text);
+        alert('메시지가 성공적으로 전송되었습니다!');
+        setFormData({ name: '', email: '', message: '' });
+      }
+      
+    } catch (error) {
+      console.error('FAILED...', error);
+      alert('메시지 전송에 실패했습니다. 다시 시도해주세요.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -33,7 +68,7 @@ const Contact = () => {
         
         <div className={styles.content}>
           <div className={styles.formContainer}>
-            <form className={styles.form} onSubmit={handleSubmit}>
+            <form ref={form} className={styles.form} onSubmit={handleSubmit}>
               <div className={styles.formGroup}>
                 <label htmlFor="name" className={styles.label}>이름</label>
                 <input
@@ -73,8 +108,12 @@ const Contact = () => {
                 />
               </div>
               
-              <button type="submit" className={styles.submitButton}>
-                메시지 보내기
+              <button 
+                type="submit" 
+                className={styles.submitButton}
+                disabled={isLoading}
+              >
+                {isLoading ? '전송 중...' : '메시지 보내기'}
               </button>
             </form>
           </div>
@@ -82,16 +121,26 @@ const Contact = () => {
           <div className={styles.socialContainer}>
             <h2 className={styles.socialTitle}>소셜 링크</h2>
             <div className={styles.socialLinks}>
-              <button className={styles.socialLink}>
+              <a 
+                href="https://github.com/zi-young" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className={styles.socialLink}
+              >
                 <div className={styles.socialPlaceholder}>
-                  <span>GitHub</span>
+                  <span>🔗 GitHub</span>
                 </div>
-              </button>
-              <button className={styles.socialLink}>
+              </a>
+              <a 
+                href="https://velog.io/@haruru/series" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className={styles.socialLink}
+              >
                 <div className={styles.socialPlaceholder}>
-                  <span>LinkedIn</span>
+                  <span>📝 Velog</span>
                 </div>
-              </button>
+              </a>
             </div>
           </div>
         </div>

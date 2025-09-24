@@ -87,11 +87,6 @@ const ProjectCard = ({ project, index }) => {
           ))}
         </div>
         
-        {!project.link && project.type === 'design' && (
-          <div className={styles.noLinkNote}>
-            <span>💡 디자인 프로젝트 - 상세 이미지 준비 중</span>
-          </div>
-        )}
       </div>
     </div>
   );

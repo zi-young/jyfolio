@@ -5,7 +5,7 @@ const About = () => {
   const skills = [
     'HTML5', 'CSS3', 'JavaScript', 'React', 'Vue.js', 'Next.js',
     'TypeScript', 'Node.js', 'Java', 'JSP', 'Egov', 'Vuetify',
-    'ThingsBoard', 'Supabase', 'Netlify', 'WordPress', 'Figma'
+    'ThingsBoard', 'Supabase', 'Netlify', 'WordPress', 'Figma', 'Git', 'Photoshop', 'Illustrator', 'Premiere Pro'
   ];
 
   return (
@@ -23,7 +23,7 @@ const About = () => {
             
             <div className={styles.career}>
               <h2 className={styles.sectionTitle}>경력</h2>
-              <p className={styles.careerPeriod}>2023.11 ~ 2025.09</p>
+              <p className={styles.careerPeriod}>2023.11 ~ 2025</p>
               <p className={styles.careerDescription}>
                 다양한 기업의 웹사이트 및 애플리케이션 개발 및 유지보수 프로젝트 참여
               </p>
@@ -42,9 +42,11 @@ const About = () => {
           </div>
           
           <div className={styles.imageContainer}>
-            <div className={styles.profilePlaceholder}>
-              <span>프로필 이미지 placeholder</span>
-            </div>
+            <img 
+              // src="/img/jiyoung.jpg" 
+              alt="지영 프로필 사진" 
+              className={styles.profileImage}
+            />
           </div>
         </div>
       </div>
